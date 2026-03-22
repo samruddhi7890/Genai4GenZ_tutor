@@ -131,11 +131,11 @@ streamlit run app.py
 
 ### Usage
 
-Upload a textbook PDF
+1. Upload a textbook PDF
 
-Enter a question
+2. Enter a question
 
-The system retrieves relevant content, prunes unnecessary context, and generates an answer
+3. The system retrieves relevant content, prunes unnecessary context, and generates an answer
 
 ### Key Innovation: Context Pruning
 
@@ -143,24 +143,24 @@ Traditional RAG systems send large chunks of text to the LLM, increasing cost an
 
 Gyaan.AI improves this by:
 
--Removing irrelevant content
+- Removing irrelevant content
 
--Reducing token usage
+- Reducing token usage
 
--Improving response time
+- Improving response time
 
--Future Improvements
+- Future Improvements
 
--Mobile-friendly interface
+- Mobile-friendly interface
 
--Personalized learning paths
+- Personalized learning paths
 
--Multi-language support
+- Multi-language support
 
--Offline-first capabilities
+- Offline-first capabilities
 
 ### Contributors
 
-P. Nischal
+1. P. Nischal
 
-Samruddhi Kadre
+2. Samruddhi Kadre
