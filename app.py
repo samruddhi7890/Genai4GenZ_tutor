@@ -90,6 +90,13 @@ import streamlit.components.v1 as components
 # ================= APP DASHBOARD =================
 def app_dashboard():
     st.markdown("""
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+<div style="position: fixed; top: 0; left: 0; right: 0; height: 70px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.06); z-index: 9999; display: flex; align-items: center; padding: 0 32px;">
+    <span style="font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800; color: #0f172a; letter-spacing: -1px;">Gyaan<span style="background: linear-gradient(90deg, #7c3aed, #db2777); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">.AI</span></span>
+</div>
+<div style="height: 70px;"></div>
+""", unsafe_allow_html=True)
+    st.markdown("""
         <style>
         [data-testid='stHeader'] {visibility: hidden;}
         [data-testid="stSidebarNav"] {display: none;}
@@ -224,6 +231,23 @@ def app_dashboard():
             color: #0f172a !important;
             -webkit-text-fill-color: #0f172a !important;
         }        
+        /* Progress bar — white track, dark text */
+        [data-testid="stProgressBar"] > div {
+            background-color: #e2e8f0 !important;
+            border-radius: 50px !important;
+        }
+
+        [data-testid="stProgressBar"] > div > div {
+            background: linear-gradient(90deg, #7c3aed, #db2777) !important;
+            border-radius: 50px !important;
+        }
+
+        /* Status text — dark grey, no blue highlight */
+        [data-testid="stMarkdownContainer"] p {
+            color: #475569 !important;
+            -webkit-text-fill-color: #475569 !important;
+            background: transparent !important;
+        }
         </style>
     """, unsafe_allow_html=True)
 
@@ -270,7 +294,7 @@ def app_dashboard():
             st.rerun()
 
     # --- MAIN HEADER ---
-    st.markdown("<h1>Gyaan.AI Neural Core <span style='font-size: 1.5rem;'>⚡</span></h1>", unsafe_allow_html=True)
+    st.markdown("<h1>Gyaan.AI Neural Core <span style='font-size: 1.5rem;'></span></h1>", unsafe_allow_html=True)
 
     col_main, col_right = st.columns([1.3, 1], gap="large")
 
@@ -569,9 +593,8 @@ button[kind="secondary"]:hover p {
             st.session_state.page = "auth"
             st.rerun()
     with c4:
-        if st.button("View GitHub Repo", key="hero_demo_main"):
-            st.toast("Link your GitHub here!")
-
+        st.markdown('<a href="https://github.com/pnischal01/Genai4GenZ_tutor" target="_blank"><button style="background: rgba(255,255,255,0.9); border: 2px solid rgba(124,58,237,0.3); border-radius: 50px; padding: 0.5rem 1.5rem; font-size: 1.1rem; font-weight: 800; color: #7c3aed; cursor: pointer; white-space: nowrap; width: 100%;">View GitHub Repo</button></a>', unsafe_allow_html=True)
+        
     # --- INTERACTIVE PREVIEW ---
     st.markdown("""
 <div class="preview-box scroll-animate">
@@ -661,6 +684,21 @@ button[kind="secondary"]:hover p {
 
 # ================= LOGIN PAGE =================
 def auth_page():
+    
+    st.markdown("""
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+<div style="position: fixed; top: 0; left: 0; right: 0; height: 70px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.06); z-index: 9999; display: flex; align-items: center; padding: 0 32px;">
+    <span style="font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800; color: #0f172a; letter-spacing: -1px;">Gyaan<span style="background: linear-gradient(90deg, #7c3aed, #db2777); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">.AI</span></span>
+</div>
+<div style="height: 70px;"></div>
+""", unsafe_allow_html=True)
+    st.markdown("""
+        <style>
+        [data-testid="stHeader"] { visibility: hidden; }
+        [data-testid="stToolbar"] { visibility: hidden; }
+        /* rest of your existing auth_page CSS here unchanged */
+        </style>
+    """, unsafe_allow_html=True)
     # 1. THE CSS FOR THE HERO BOX 
     st.markdown("""
         <style>
@@ -673,18 +711,7 @@ def auth_page():
                 radial-gradient(at 50% 100%, rgba(56, 189, 248, 0.12) 0px, transparent 50%) !important;
         }
 
-        /* THE HERO BOX - FORCING THE SOLID GREY MARGIN & SHADOW */
-        [data-testid="stVerticalBlockBorderWrapper"] {
-            background-color: #f4f7fc !important; 
-            /* THE SOLID GREY MARGIN */
-            border: 2px solid #94a3b8 !important; 
-            border-radius: 16px !important;
-            padding: 40px 50px !important;
-            /* THE DEEP SHADOW */
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
-            max-width: 550px !important;
-            margin: 40px auto !important;
-        }
+
 
         /* Typography */
         h1 { 
@@ -707,7 +734,15 @@ def auth_page():
             color: #1e293b !important;
             -webkit-text-fill-color: #1e293b !important;
         }
-
+        [data-testid="stVerticalBlockBorderWrapper"] {
+            background: #ffffff !important;
+            border: 2px solid #000000 !important;
+            border-radius: 20px !important;
+            box-shadow: 6px 6px 0px #000000 !important;
+            padding: 40px 50px !important;
+            max-width: 550px !important;
+            margin: 40px auto !important;
+        }
         /* Add crisp borders to the inputs */
         div[data-baseweb="input"], div[data-baseweb="select"] > div {
             border: 1px solid #cbd5e1 !important;
@@ -753,6 +788,32 @@ def auth_page():
         </style>
     """, unsafe_allow_html=True)
 
+    components.html("""
+    <script>
+    function styleContainers() {
+        var style = parent.document.getElementById('gyaan-container-style');
+        if (!style) {
+            style = parent.document.createElement('style');
+            style.id = 'gyaan-container-style';
+            parent.document.head.appendChild(style);
+        }
+        style.innerHTML = `
+            [data-testid="stVerticalBlockBorderWrapper"] {
+                background: #ffffff !important;
+                border: 2px solid #000000 !important;
+                border-radius: 20px !important;
+                box-shadow: 6px 6px 0px #000000 !important;
+                padding: 40px 50px !important;
+                max-width: 550px !important;
+                margin: 40px auto !important;
+            }
+        `;
+    }
+    setTimeout(styleContainers, 100);
+    setTimeout(styleContainers, 500);
+    </script>
+    """, height=0)
+
     _, col, _ = st.columns([1, 2, 1])
     
     with col:
@@ -789,6 +850,20 @@ def auth_page():
 def signup_page():
     st.markdown("""
         <style>
+        [data-testid="stHeader"] { visibility: hidden; }
+        [data-testid="stToolbar"] { visibility: hidden; }
+        /* rest of your existing auth_page CSS here unchanged */
+        </style>
+    """, unsafe_allow_html=True)
+    st.markdown("""
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+<div style="position: fixed; top: 0; left: 0; right: 0; height: 70px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(0,0,0,0.06); z-index: 9999; display: flex; align-items: center; padding: 0 32px;">
+    <span style="font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800; color: #0f172a; letter-spacing: -1px;">Gyaan<span style="background: linear-gradient(90deg, #7c3aed, #db2777); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">.AI</span></span>
+</div>
+<div style="height: 70px;"></div>
+""", unsafe_allow_html=True)
+    st.markdown("""
+        <style>
         /* Global Background Gradient */
         .stApp {
             background: #f8fafc !important; 
@@ -798,16 +873,6 @@ def signup_page():
                 radial-gradient(at 50% 100%, rgba(56, 189, 248, 0.12) 0px, transparent 50%) !important;
         }
 
-        /* THE HERO BOX - FORCING THE SOLID BLACK MARGIN & SHADOW */
-        [data-testid="stVerticalBlockBorderWrapper"] {
-            background-color: #f4f7fc !important; 
-            border: 2px solid #000000 !important; 
-            border-radius: 16px !important;
-            padding: 40px 50px !important;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2) !important;
-            max-width: 550px !important;
-            margin: 40px auto !important;
-        }
 
         /* Typography */
         h1 { 
@@ -836,7 +901,15 @@ def signup_page():
             border: 1px solid #cbd5e1 !important;
             border-radius: 8px !important;
         }
-
+        [data-testid="stVerticalBlockBorderWrapper"] {
+            background: #ffffff !important;
+            border: 2px solid #000000 !important;
+            border-radius: 20px !important;
+            box-shadow: 6px 6px 0px #000000 !important;
+            padding: 40px 50px !important;
+            max-width: 550px !important;
+            margin: 40px auto !important;
+        }
         /* PRIMARY BUTTON (Sign Up) */
         button[kind="primary"] {
             background: linear-gradient(90deg, #7c3aed, #db2777) !important;
@@ -874,6 +947,31 @@ def signup_page():
         }
         </style>
     """, unsafe_allow_html=True)
+    components.html("""
+<script>
+function styleContainers() {
+    var style = parent.document.getElementById('gyaan-container-style');
+    if (!style) {
+        style = parent.document.createElement('style');
+        style.id = 'gyaan-container-style';
+        parent.document.head.appendChild(style);
+    }
+    style.innerHTML = `
+        [data-testid="stVerticalBlockBorderWrapper"] {
+            background: #ffffff !important;
+            border: 2px solid #000000 !important;
+            border-radius: 20px !important;
+            box-shadow: 6px 6px 0px #000000 !important;
+            padding: 40px 50px !important;
+            max-width: 550px !important;
+            margin: 40px auto !important;
+        }
+    `;
+}
+setTimeout(styleContainers, 100);
+setTimeout(styleContainers, 500);
+</script>
+""", height=0)
 
     _, col, _ = st.columns([1, 2, 1])
     
