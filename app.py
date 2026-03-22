@@ -7,7 +7,7 @@ import requests
 import json
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
-
+import streamlit.components.v1 as components
 
 # ================= INITIALIZATION =================
 # This MUST be the very first Streamlit command!
@@ -89,68 +89,56 @@ import streamlit.components.v1 as components
 # ================= APP DASHBOARD =================
 # ================= APP DASHBOARD =================
 def app_dashboard():
-    # --- PREMIUM DASHBOARD CSS ---
     st.markdown("""
         <style>
-        /* Hide Default Header */
         [data-testid='stHeader'] {visibility: hidden;}
-                /* Add this inside your existing <style> tag in app_dashboard */
-input, textarea, [data-baseweb="base-input"] {
-    color: #000000 !important;
-    -webkit-text-fill-color: #000000 !important;
-}
-                
-               .answer-box {
-            line-height: 1.7; 
-            padding: 20px; 
-            background: #ffffff; 
-            border-radius: 12px; 
-            border-left: 5px solid #7c3aed;
-            color: #1e293b;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            margin-top: 10px;
-            white-space: pre-wrap;  /* <--- THIS FIXES THE SQUISHED TEXT! */
-        }
-        
-        /* Global Background Gradient */
+        [data-testid="stSidebarNav"] {display: none;}
+
         .stApp {
-            background: #f8fafc !important; 
+            background: #f0f2f8 !important; 
             background-image: 
                 radial-gradient(at 0% 0%, rgba(124, 58, 237, 0.08) 0px, transparent 50%),
                 radial-gradient(at 100% 0%, rgba(219, 39, 119, 0.08) 0px, transparent 50%),
                 radial-gradient(at 50% 100%, rgba(56, 189, 248, 0.08) 0px, transparent 50%) !important;
         }
 
-        /* Typography */
-        h1, h2, h3 { color: #0f172a !important; font-family: 'Outfit', sans-serif !important; letter-spacing: -0.5px !important; margin-top: 0 !important;}
-        p { color: #475569 !important; font-family: 'Inter', sans-serif !important; }
-
-        /* ========================================================= */
-        /* THE NUCLEAR FIX: Force the layout columns to be the boxes */
-        /* ========================================================= */
-        [data-testid="column"] {
+        [data-testid="stVerticalBlockBorderWrapper"] {
             background-color: #ffffff !important;
-            border: 1px solid #e2e8f0 !important;
+            border: 2px solid #000000 !important;
             border-radius: 20px !important;
-            padding: 30px !important;
-            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.07) !important;
+            padding: 28px !important;
+            box-shadow: 6px 6px 0px #000000 !important;
+            min-height: 80vh !important;
         }
 
-        /* Input Styling */
-        [data-baseweb="base-input"], div[data-baseweb="select"] > div {
+        h1, h2, h3 { color: #0f172a !important; font-family: 'Outfit', sans-serif !important; }
+
+        .answer-box {
+            line-height: 1.7; 
+            padding: 20px; 
+            background: #ffffff; 
+            border-radius: 12px; 
+            border-left: 5px solid #7c3aed;
+            color: #1e293b;
+            white-space: pre-wrap;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        input, textarea, [data-baseweb="base-input"], div[data-baseweb="select"] > div {
+            color: #000000 !important;
+            -webkit-text-fill-color: #000000 !important;
             background-color: #f8fafc !important;
             border: 1px solid #cbd5e1 !important;
             border-radius: 10px !important;
         }
-        
+
         .stTextArea textarea {
             background-color: #f8fafc !important;
             border: 1px solid #cbd5e1 !important;
             border-radius: 10px !important;
         }
 
-        /* Gradient Button */
         button[kind="primary"] {
             background: linear-gradient(90deg, #7c3aed, #db2777) !important;
             border: none !important;
@@ -159,17 +147,50 @@ input, textarea, [data-baseweb="base-input"] {
             box-shadow: 0 10px 20px -5px rgba(124, 58, 237, 0.4) !important;
         }
         button[kind="primary"] p { color: white !important; font-weight: 700 !important; font-size: 1.1rem !important;}
-        
-        [data-testid="stSidebarNav"] {display: none;}
         </style>
     """, unsafe_allow_html=True)
+
+
+    components.html("""
+    <script>
+    function styleColumns() {
+        var cols = parent.document.querySelectorAll('[data-testid="stHorizontalBlock"] > [data-testid="stColumn"]');
+        if (cols.length === 0) {
+            cols = parent.document.querySelectorAll('[data-testid="column"]');
+        }
+        
+        cols.forEach(function(col, index) {
+            if (cols.length === 3 && index === 1) {
+                col.style.background = 'transparent';
+                col.style.border = 'none';
+                col.style.boxShadow = 'none';
+                return;
+            }
+
+            col.style.background = '#ffffff';
+            col.style.border = '1px solid rgba(124, 58, 237, 0.15)'; 
+            col.style.borderRadius = '24px';
+            col.style.boxShadow = '0 20px 40px -8px rgba(0, 0, 0, 0.08), 0 10px 20px -4px rgba(124, 58, 237, 0.04)';
+            col.style.padding = '36px 32px';
+            
+            // THE FIX: Stop the flexbox from stretching them to match each other
+            col.style.alignSelf = 'flex-start';
+            col.style.height = 'fit-content'; 
+            
+            col.style.transition = 'all 0.3s ease'; 
+        });
+    }
+    setTimeout(styleColumns, 300);
+    setTimeout(styleColumns, 800);
+    </script>
+    """, height=0) 
 
     # --- SIDEBAR ---
     with st.sidebar:
         st.markdown("<h2 style='text-align: center;'>Navigation</h2><hr>", unsafe_allow_html=True)
         if st.button("👤 Profile & History", use_container_width=True):
-            st.toast("Accessing profile...") 
-        st.markdown("<div style='height: 60vh;'></div>", unsafe_allow_html=True) 
+            st.toast("Accessing profile...")
+        st.markdown("<div style='height: 60vh;'></div>", unsafe_allow_html=True)
         if st.button("← Logout", use_container_width=True):
             st.session_state.page = "front"
             st.rerun()
@@ -177,150 +198,114 @@ input, textarea, [data-baseweb="base-input"] {
     # --- MAIN HEADER ---
     st.markdown("<h1>Gyaan.AI Neural Core <span style='font-size: 1.5rem;'>⚡</span></h1>", unsafe_allow_html=True)
 
-    # --- LAYOUT COLUMNS (These are now the actual white boxes) ---
-    col_main, col_spacer, col_right = st.columns([1.3, 0.1, 1])
+    col_main, col_right = st.columns([1.3, 1], gap="large")
 
     with col_main:
-        # 1. UPLOAD TEXTBOOK SECTION
-        st.markdown("<h3>Upload Textbook</h3>", unsafe_allow_html=True)
-        uploaded_file = st.file_uploader("Upload", type="pdf", label_visibility="collapsed")
-        
-        st.markdown("<p style='font-weight: 600; margin-bottom: 5px; color: #0f172a;'>Name this textbook:</p>", unsafe_allow_html=True)
-        doc_name = st.text_input("Name", placeholder="e.g., Class 10 Math", label_visibility="collapsed")
-        
-        st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
-        if st.button("Save & Process Textbook", type="primary", use_container_width=True):
-            if uploaded_file and doc_name:
-                with st.spinner("Extracting lessons from PDF..."):
-                    # This calls your Ollama-powered function in ingest.py
-                    extracted_data = process_textbook(uploaded_file)
-                    
-                    # Store the ACTUAL data
-                    st.session_state['lesson_summaries'] = extracted_data
-                    st.session_state['book_uploaded'] = True 
-                    
-                st.success(f"'{doc_name}' processed successfully!")
-                # CRITICAL: Force a rerun so the right column sees the new session_state
-                st.rerun() 
-            else:
-                st.warning("Please upload a file and give it a name.")
-            # Add this line at the end of the 'Save & Process' button logic
+        with st.container(border=True):
+            st.markdown("<h3>Upload Textbook</h3>", unsafe_allow_html=True)
+            uploaded_file = st.file_uploader("Upload", type="pdf", label_visibility="collapsed")
             
-        
-        # VISUAL DIVIDER
-        st.markdown("<hr style='margin: 30px 0; border-top: 1px solid #e2e8f0;'>", unsafe_allow_html=True)
-        
-        # 2. Q&A SECTION
-        st.markdown("<h3>Have questions? Feel free to ask!</h3>", unsafe_allow_html=True)
-        query = st.text_area("Question", height=120, placeholder="e.g., Explain Pythagoras Theorem", label_visibility="collapsed")
-        
-        st.markdown("<p style='font-weight: 600; margin-bottom: 5px; color: #0f172a;'>Format:</p>", unsafe_allow_html=True)
-        answer_format = st.selectbox("Format Dropdown", ["Detailed Explanation", "Short Paragraph", "Bullet Points"], label_visibility="collapsed")
-        
-        st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
-        process_btn = st.button("Get Answer", type="primary", use_container_width=True)
-
-        # 3. ANSWER DISPLAY
-        # Replace your existing 'if process_btn and query:' block with this:
-        # 3. ANSWER DISPLAY
-        # 3. ANSWER DISPLAY (With Real-Time Progress Bar & Status Updates)
-        if process_btn and query:
-            # Create placeholders so the UI updates in place
-            qa_progress = st.progress(0)
-            qa_status = st.empty()
+            st.markdown("<p style='font-weight: 600; margin-bottom: 5px; color: #0f172a;'>Name this textbook:</p>", unsafe_allow_html=True)
+            doc_name = st.text_input("Name", placeholder="e.g., Class 10 Math", label_visibility="collapsed")
             
-            try:
-                # --- STEP 1: Compression (0% to 40%) ---
-                qa_status.markdown("🔍 **Step 1/2: Pruning context via ScaleDown API...**")
-                qa_progress.progress(20)
-                
-                # This calls your pruner.py (now with a 3s timeout)
-                context, b_tokens, a_tokens = run_context_compression(query)
-                qa_progress.progress(40)
-                
-                # --- STEP 2: Generation (40% to 90%) ---
-                qa_status.markdown("🧠 **Step 2/2: Generating Tutor response (Ollama 1B)...**")
-                
-                # This calls your Ollama local engine
-                answer = run_llm_generation(context, query, answer_format)
-                qa_progress.progress(90)
-                
-                # --- STEP 3: Finalizing (90% to 100%) ---
-                savings = round((1 - (a_tokens / b_tokens)) * 100) if b_tokens > 0 else 0
-                qa_progress.progress(100)
-                
-                # Wait a split second so the user sees the 100%
-                import time
-                time.sleep(0.4) 
-                
-                # Remove the progress bar and status to keep the UI clean
-                qa_progress.empty()
-                qa_status.empty()
-                
-                # Display the results
-                st.markdown("<hr style='margin: 30px 0;'>", unsafe_allow_html=True)
-                st.success(f"⚡ ScaleDown Active: {savings}% Data Saved ({b_tokens} → {a_tokens} tokens)")
-                st.markdown(f"<h3>Tutor Response</h3><div class='answer-box'>{answer}</div>", unsafe_allow_html=True)
-
-            except Exception as e:
-                qa_progress.empty()
-                qa_status.empty()
-                st.error(f"An error occurred: {e}")
-            # --- EXAM PREP POP-UP ---
-        st.markdown("<hr style='margin: 40px 0 20px 0; border-top: 1px solid #e2e8f0;'>", unsafe_allow_html=True)
-        st.markdown("<h3>📝 Exam Preparation</h3>", unsafe_allow_html=True)
-        
-        if st.session_state.get('book_uploaded'):
-            data = st.session_state.get('lesson_summaries', {})
-            exam_questions = data.get('exam_questions', [])
-            
-            with st.expander("🏆 Click to View Predicted Exam Questions"):
-                st.markdown("#### High-Probability Exam Topics:")
-                if exam_questions:
-                    for i, q in enumerate(exam_questions):
-                        st.markdown(f"**{i+1}.** {q}")
+            st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
+            if st.button("Save & Process Textbook", type="primary", use_container_width=True):
+                if uploaded_file and doc_name:
+                    with st.spinner("Extracting lessons from PDF..."):
+                        extracted_data = process_textbook(uploaded_file)
+                        st.session_state['lesson_summaries'] = extracted_data
+                        st.session_state['book_uploaded'] = True
+                    st.success(f"'{doc_name}' processed successfully!")
+                    st.rerun()
                 else:
-                    st.write("No questions generated for this document.")
-        else:
-            st.info("Upload a book to generate practice exams.")
+                    st.warning("Please upload a file and give it a name.")
 
-    with col_spacer:
-        # This just adds physical empty space between the two big white boxes
-        st.empty()
+            st.markdown("<hr style='margin: 30px 0; border-top: 1px solid #e2e8f0;'>", unsafe_allow_html=True)
+
+            st.markdown("<h3>Have questions? Feel free to ask!</h3>", unsafe_allow_html=True)
+            query = st.text_area("Question", height=120, placeholder="e.g., Explain Pythagoras Theorem", label_visibility="collapsed")
+
+            st.markdown("<p style='font-weight: 600; margin-bottom: 5px; color: #0f172a;'>Format:</p>", unsafe_allow_html=True)
+            answer_format = st.selectbox("Format Dropdown", ["Detailed Explanation", "Short Paragraph", "Bullet Points"], label_visibility="collapsed")
+
+            st.markdown("<div style='margin-top: 15px;'></div>", unsafe_allow_html=True)
+            process_btn = st.button("Get Answer", type="primary", use_container_width=True)
+
+            if process_btn and query:
+                qa_progress = st.progress(0)
+                qa_status = st.empty()
+                try:
+                    qa_status.markdown("🔍 **Step 1/2: Pruning context via ScaleDown API...**")
+                    qa_progress.progress(20)
+                    context, b_tokens, a_tokens = run_context_compression(query)
+                    qa_progress.progress(40)
+
+                    qa_status.markdown("🧠 **Step 2/2: Generating Tutor response (Ollama 1B)...**")
+                    answer = run_llm_generation(context, query, answer_format)
+                    qa_progress.progress(90)
+
+                    savings = round((1 - (a_tokens / b_tokens)) * 100) if b_tokens > 0 else 0
+                    qa_progress.progress(100)
+
+                    import time
+                    time.sleep(0.4)
+
+                    qa_progress.empty()
+                    qa_status.empty()
+
+                    st.markdown("<hr style='margin: 30px 0;'>", unsafe_allow_html=True)
+                    st.success(f"⚡ ScaleDown Active: {savings}% Data Saved ({b_tokens} → {a_tokens} tokens)")
+                    st.markdown(f"<h3>Tutor Response</h3><div class='answer-box'>{answer}</div>", unsafe_allow_html=True)
+
+                except Exception as e:
+                    qa_progress.empty()
+                    qa_status.empty()
+                    st.error(f"An error occurred: {e}")
+
+            st.markdown("<hr style='margin: 40px 0 20px 0; border-top: 1px solid #e2e8f0;'>", unsafe_allow_html=True)
+            st.markdown("<h3>📝 Exam Preparation</h3>", unsafe_allow_html=True)
+
+            if st.session_state.get('book_uploaded'):
+                data = st.session_state.get('lesson_summaries', {})
+                exam_questions = data.get('exam_questions', [])
+                with st.expander("🏆 Click to View Predicted Exam Questions"):
+                    st.markdown("#### High-Probability Exam Topics:")
+                    if exam_questions:
+                        for i, q in enumerate(exam_questions):
+                            st.markdown(f"**{i+1}.** {q}")
+                    else:
+                        st.write("No questions generated for this document.")
+            else:
+                st.info("Upload a book to generate practice exams.")
 
     with col_right:
-        # --- RIGHT SIDE HERO BOX ---
-        st.markdown("<h3>Lesson Summaries</h3>", unsafe_allow_html=True)
-        
-        if st.session_state.get('book_uploaded'):
-            data = st.session_state['lesson_summaries']
-            
-            # PROPERLY CATCH THE ERROR
-            if "Error Processing Book" in data:
-                st.error("⚠️ AI Processing Error")
-                st.write(data["Error Processing Book"][0])
-                st.write(data["Error Processing Book"][1])
+        with st.container(border=True):
+            st.markdown("<h3>Lesson Summaries</h3>", unsafe_allow_html=True)
+
+            if st.session_state.get('book_uploaded'):
+                data = st.session_state['lesson_summaries']
+
+                if "Error Processing Book" in data:
+                    st.error("⚠️ AI Processing Error")
+                    st.write(data["Error Processing Book"][0])
+                    st.write(data["Error Processing Book"][1])
+                else:
+                    chapters = data.get('chapters', {})
+                    for title, summary in chapters.items():
+                        with st.expander(title):
+                            if isinstance(summary, list):
+                                formatted_summary = "\n\n".join(str(p) for p in summary)
+                            else:
+                                formatted_summary = str(summary).replace('\n', '\n\n')
+                            st.markdown(formatted_summary)
+
+                    st.markdown("<br><hr>", unsafe_allow_html=True)
+                    st.markdown("<h3 style='color: #7c3aed !important;'>🗺️ Study Roadmap</h3>", unsafe_allow_html=True)
+                    roadmap = data.get('roadmap', [])
+                    for step in roadmap:
+                        st.info(step)
             else:
-                # 1. Pull out just the chapters
-                chapters = data.get('chapters', {})
-                
-                for title, summary in chapters.items():
-                    with st.expander(title): 
-                        if isinstance(summary, list):
-                            formatted_summary = "\n\n".join(str(p) for p in summary)
-                        else:
-                            formatted_summary = str(summary).replace('\n', '\n\n')
-                        st.markdown(formatted_summary)
-                
-                # 2. Add the Roadmap below the chapters
-                st.markdown("<br><hr>", unsafe_allow_html=True)
-                st.markdown("<h3 style='color: #7c3aed !important;'>🗺️ Study Roadmap</h3>", unsafe_allow_html=True)
-                roadmap = data.get('roadmap', [])
-                
-                for step in roadmap:
-                    st.info(step)
-        else:
-            st.info("Upload a book to see summaries and roadmaps.")
+                st.info("Upload a book to see summaries and roadmaps.")
 # ================= FRONT PAGE DESIGN =================
 def landing_page():
     # --- EXTERNAL ASSETS (Fonts & Icons) ---
