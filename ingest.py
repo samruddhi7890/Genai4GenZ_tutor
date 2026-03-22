@@ -1,6 +1,8 @@
 import PyPDF2
 import os
 import json
+import ast
+import re
 import streamlit as st
 from groq import Groq
 from dotenv import load_dotenv
@@ -27,25 +29,25 @@ def process_textbook(uploaded_file):
         vector_store.save_local("faiss_index")
         
         # 3. GENERATE JSON DATA VIA GROQ (Cloud)
-        toc_text = full_text[:6000] # Give enough text to find TOC
+        toc_text = full_text[:15000] 
         client = Groq(api_key=os.getenv("GROQ_API_KEY"))
         
-        # We tell Groq to be very brief to stay under character limits
         prompt = f"""
-        Extract data from the Table of Contents of this book.
+        Analyze the following text from the beginning of a textbook. 
+        Your ONLY job is to output a strictly valid JSON object representing the book's structure.
         
         INSTRUCTIONS:
         1. Extract the FIRST 8 main chapters.
         2. Format titles with Roman Numerals (I, II, III...).
-        3. Each chapter summary must be EXACTLY 1 dense paragraph of 3 sentences.
+        3. MAKE THE SUMMARIES LONG. Each chapter summary must be a highly detailed, comprehensive paragraph of at least 5 to 7 sentences (approximately 80-100 words). Since you are only seeing the Table of Contents, you MUST use your extensive educational knowledge to fill out these summaries with core concepts, historical context, and key takeaways related to the chapter's title.
         4. Include a 4-step 'roadmap'.
         5. Include 5 'exam_questions'.
         
-        You must output ONLY valid JSON. 
+        CRITICAL FAIL-SAFE: If you cannot find a clear Table of Contents, infer the topics. Output ONLY valid JSON.
         
         JSON STRUCTURE:
         {{
-            "chapters": {{ "I. Chapter Name": ["Summary paragraph"] }},
+            "chapters": {{ "I. Chapter Name": ["This chapter provides an in-depth analysis of the topic. It begins by exploring the fundamental concepts and historical background that set the stage. Students will learn about the key figures, primary mechanisms, and underlying theories involved. Furthermore, the text breaks down complex scenarios into understandable frameworks. Finally, it highlights the real-world applications and long-term consequences of these events, ensuring a comprehensive grasp of the material."] }},
             "roadmap": ["Step 1", "Step 2", "Step 3", "Step 4"],
             "exam_questions": ["Q1", "Q2", "Q3", "Q4", "Q5"]
         }}
@@ -54,16 +56,42 @@ def process_textbook(uploaded_file):
         """
 
         response = client.chat.completions.create(
-            messages=[{"role": "user", "content": prompt}],
+            messages=[
+                {"role": "system", "content": "You are a rigid data extraction API. You output raw, valid JSON and nothing else. Never use markdown. Never apologize."},
+                {"role": "user", "content": prompt}
+            ],
             model="llama-3.1-8b-instant",
             temperature=0.0,
-            # 🚨 THIS FORCES GROQ TO OUTPUT PERFECT JSON 🚨
-            response_format={"type": "json_object"} 
+            max_tokens=4000  # 🚨 THE FIX: Gives the AI enough room to write long summaries without getting cut off
         )
         
-        raw_response = response.choices[0].message.content
-        return json.loads(raw_response)
+        raw_response = response.choices[0].message.content.strip()
+        
+        # 🚨 DEBUGGING
+        print("\n--- RAW AI RESPONSE ---")
+        print(raw_response)
+        print("-----------------------\n")
+        
+        # 🚨 AGGRESSIVE CLEANUP
+        raw_response = raw_response.replace("```json", "").replace("```", "").strip()
+        
+        start_idx = raw_response.find('{')
+        end_idx = raw_response.rfind('}')
+        
+        if start_idx != -1 and end_idx != -1:
+            clean_json_string = raw_response[start_idx:end_idx+1]
+            
+            clean_json_string = re.sub(r',\s*}', '}', clean_json_string)
+            clean_json_string = re.sub(r',\s*\]', ']', clean_json_string)
+            
+            try:
+                return json.loads(clean_json_string)
+            except json.JSONDecodeError:
+                import ast
+                return ast.literal_eval(clean_json_string)
+        else:
+            raise ValueError(f"No brackets found. The AI completely ignored the instructions. Raw output: {raw_response[:100]}...")
 
     except Exception as e:
         print(f"Groq Processing Error: {e}")
-        return {"Error Processing Book": [f"Details: {str(e)}", "The book structure was too complex. Try a smaller section."]}
+        return {"Error Processing Book": [f"Details: {str(e)}", "The AI generated poorly formatted data. Check your terminal for the raw output."]}

@@ -113,6 +113,51 @@ def app_dashboard():
 
         h1, h2, h3 { color: #0f172a !important; font-family: 'Outfit', sans-serif !important; }
 
+        /* ── Expander: all text dark ── */
+        [data-testid="stExpander"] p, 
+        [data-testid="stExpander"] span,
+        [data-testid="stExpander"] div,
+        [data-testid="stExpander"] label,
+        [data-testid="stExpander"] summary {
+            color: #1e293b !important;
+            -webkit-text-fill-color: #1e293b !important;
+        }
+
+        [data-testid="stExpander"] {
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 8px !important;
+            margin-bottom: 10px !important;
+            background-color: #ffffff !important;
+        }
+
+        /* ── FIX: Expanded expander header — white not black ── */
+        [data-testid="stExpander"] details[open] > summary,
+        [data-testid="stExpander"] details > summary {
+            background-color: #f8fafc !important;
+            border-radius: 8px !important;
+        }
+
+        [data-testid="stExpander"] > details > summary p {
+            color: #0f172a !important;
+            -webkit-text-fill-color: #0f172a !important;
+            font-weight: 600 !important;
+        }
+
+        /* ── FIX: File uploader — white background ── */
+        [data-testid="stFileUploader"] > div,
+        [data-testid="stFileUploadDropzone"] {
+            background-color: #f8fafc !important;
+            border: 2px dashed #cbd5e1 !important;
+            border-radius: 10px !important;
+        }
+
+        [data-testid="stFileUploadDropzone"] p,
+        [data-testid="stFileUploadDropzone"] span,
+        [data-testid="stFileUploadDropzone"] small {
+            color: #475569 !important;
+            -webkit-text-fill-color: #475569 !important;
+        }
+
         .answer-box {
             line-height: 1.7; 
             padding: 20px; 
@@ -147,6 +192,38 @@ def app_dashboard():
             box-shadow: 0 10px 20px -5px rgba(124, 58, 237, 0.4) !important;
         }
         button[kind="primary"] p { color: white !important; font-weight: 700 !important; font-size: 1.1rem !important;}
+        /* ── File uploader dark area fix ── */
+        [data-testid="stFileUploader"] section,
+        [data-testid="stFileUploader"] section > div,
+        [data-testid="stFileUploader"] section button {
+            background-color: #f8fafc !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        [data-testid="stFileUploader"] section span,
+        [data-testid="stFileUploader"] section p,
+        [data-testid="stFileUploader"] section small {
+            color: #475569 !important;
+            -webkit-text-fill-color: #475569 !important;
+        }
+
+        /* Upload icon color */
+        [data-testid="stFileUploader"] section svg {
+            fill: #7c3aed !important;
+        }
+
+        /* Browse files button */
+        [data-testid="stFileUploader"] section button {
+            background-color: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            border-radius: 8px !important;
+            color: #0f172a !important;
+        }
+
+        [data-testid="stFileUploader"] section button span {
+            color: #0f172a !important;
+            -webkit-text-fill-color: #0f172a !important;
+        }        
         </style>
     """, unsafe_allow_html=True)
 
@@ -172,18 +249,15 @@ def app_dashboard():
             col.style.borderRadius = '24px';
             col.style.boxShadow = '0 20px 40px -8px rgba(0, 0, 0, 0.08), 0 10px 20px -4px rgba(124, 58, 237, 0.04)';
             col.style.padding = '36px 32px';
-            
-            // THE FIX: Stop the flexbox from stretching them to match each other
             col.style.alignSelf = 'flex-start';
             col.style.height = 'fit-content'; 
-            
             col.style.transition = 'all 0.3s ease'; 
         });
     }
     setTimeout(styleColumns, 300);
     setTimeout(styleColumns, 800);
     </script>
-    """, height=0) 
+    """, height=0)
 
     # --- SIDEBAR ---
     with st.sidebar:
